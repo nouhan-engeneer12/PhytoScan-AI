@@ -150,7 +150,8 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
 
 .stApp {
-    background: #F4F3EB;
+background: linear-gradient(rgba(244,243,235,0.88), rgba(244,243,235,0.92)), url("https://images.unsplash.com/photo-1441974231531-c6227db76b6e");
+background-size: cover;
     color: #183D2B;
 }
 html, body, [class*="css"] {
