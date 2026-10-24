@@ -8,206 +8,286 @@ st.set_page_config(
     page_title="PhytoScan AI",
     page_icon="🌿",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # ---------- Language ----------
-if "lang" not in st.session_state:
-    st.session_state.lang = "EN"
+if "language" not in st.session_state:
+    st.session_state.language = "AR"
 
-lang = st.session_state.lang
-ar = lang == "AR"
+ar = st.session_state.language == "AR"
 
-# ---------- Styling ----------
+T = {
+    "AR": {
+        "home": "الرئيسية",
+        "scanner": "تحليل الصور",
+        "library": "دليل الأمراض",
+        "care": "دليل العناية",
+        "about": "عن المشروع",
+        "language": "English",
+        "tag": "الزراعة الذكية • الذكاء الاصطناعي",
+        "welcome": "مرحبًا بك في",
+        "subtitle": "اكتشف صحة النباتات بصورة أذكى",
+        "description": "منصة تعليمية تستخدم الذكاء الاصطناعي لتحليل صور الأوراق وتقديم توقع مبدئي وإرشادات عامة للعناية بالنبات.",
+        "start": "ابدأ تحليل صورة",
+        "explore": "استكشف دليل الأمراض",
+        "scanner_title": "محلل الصور الذكي",
+        "scanner_desc": "ارفع صورة واضحة لورقة نبات لبدء التحليل.",
+        "upload": "اختر صورة من جهازك",
+        "analyze": "ابدأ التحليل",
+        "again": "حلّل صورة أخرى",
+        "result": "نتيجة التحليل",
+        "prediction": "الفئة المتوقعة",
+        "score": "درجة النموذج",
+        "symptoms": "الأعراض الشائعة",
+        "advice": "إرشادات عامة",
+        "healthy": "ورقة طماطم سليمة",
+        "bacterial": "التبقع البكتيري",
+        "early": "اللفحة المبكرة",
+        "late": "اللفحة المتأخرة",
+        "tip_title": "كيف تحصل على صورة أفضل؟",
+        "tip1": "استخدم إضاءة جيدة.",
+        "tip2": "اجعل الورقة واضحة وفي منتصف الصورة.",
+        "tip3": "تجنب الصور المهزوزة والخلفيات المزدحمة.",
+        "library_title": "دليل أمراض أوراق الطماطم",
+        "library_desc": "هذه هي الفئات الأربع التي يستطيع النموذج الحالي توقعها.",
+        "care_title": "دليل العناية بالنبات",
+        "care1": "الري: تجنب الإفراط في الري، وراعِ احتياجات النبات وظروف التربة.",
+        "care2": "الإضاءة: وفر ضوءًا مناسبًا لنوع النبات دون تعريضه لظروف قاسية.",
+        "care3": "الفحص: افحص جانبي الأوراق بانتظام وراقب أي تغيرات جديدة.",
+        "care4": "النظافة: نظف أدوات الزراعة، وتجنب نقل الأجزاء المصابة بين النباتات.",
+        "care5": "الاستشارة: عند انتشار الأعراض، استشر مهندسًا زراعيًا قبل اختيار العلاج.",
+        "about_title": "عن PhytoScan AI",
+        "about_desc": "مشروع طلابي يستكشف توظيف التعلم العميق في التصنيف المبدئي لأمراض أوراق الطماطم.",
+        "step1": "1. رفع الصورة",
+        "step2": "2. تجهيز الصورة",
+        "step3": "3. تحليل النموذج",
+        "step4": "4. عرض التوقع",
+        "limitation": "حدود النموذج",
+        "limitation_text": "النموذج الحالي مدرب على أربع فئات لأوراق الطماطم فقط. قد يخطئ في التوقع، ولا يمثل بديلًا عن التشخيص الزراعي المتخصص.",
+        "missing": "ملف النموذج غير موجود. تأكد من وجود PhytoScan_AI.keras في مستودع المشروع.",
+        "error": "تعذر تحليل الصورة. جرّب صورة أخرى بصيغة JPG أو PNG.",
+        "wait": "جارٍ تحليل الصورة...",
+        "footer": "PhytoScan AI • نموذج تعليمي للكشف المبدئي عن أمراض أوراق الطماطم",
+        "bacterial_sym": "قد تظهر بقع داكنة صغيرة على الأوراق، وقد تحيط بها حواف صفراء.",
+        "bacterial_advice": "راقب انتشار البقع، وتجنب تبليل الأوراق أثناء الري، واستشر مختصًا زراعيًا عند الحاجة.",
+        "early_sym": "قد تظهر بقع بنية ذات حلقات متداخلة، مع اصفرار حول المنطقة المصابة.",
+        "early_advice": "راقب الأوراق المجاورة وتجنب الري فوق الأوراق، واطلب المشورة الزراعية إذا استمرت الأعراض.",
+        "late_sym": "قد تظهر بقع داكنة تنتشر على الأوراق وقد تتفاقم في ظروف مناسبة للمرض.",
+        "late_advice": "افحص النبات سريعًا واستشر مختصًا زراعيًا قبل اختيار أي علاج.",
+        "healthy_sym": "صنّف النموذج الصورة على أنها ورقة طماطم سليمة.",
+        "healthy_advice": "واصل متابعة النبات والحفاظ على ظروف زراعة مناسبة.",
+        "general": "لا يمكن للنموذج تأكيد المرض اعتمادًا على الصورة وحدها."
+    },
+    "EN": {
+        "home": "Home",
+        "scanner": "AI Scanner",
+        "library": "Disease Library",
+        "care": "Plant Care",
+        "about": "About",
+        "language": "العربية",
+        "tag": "SMART AGRICULTURE • ARTIFICIAL INTELLIGENCE",
+        "welcome": "Welcome to",
+        "subtitle": "A smarter look at plant health",
+        "description": "An educational platform that analyzes leaf images to provide a preliminary prediction and general plant-care guidance.",
+        "start": "Analyze an Image",
+        "explore": "Explore Disease Library",
+        "scanner_title": "AI Image Scanner",
+        "scanner_desc": "Upload a clear leaf image to begin the analysis.",
+        "upload": "Choose an image from your device",
+        "analyze": "Analyze Leaf",
+        "again": "Analyze Another Image",
+        "result": "Analysis Result",
+        "prediction": "Predicted class",
+        "score": "Model score",
+        "healthy": "Healthy Tomato Leaf",
+        "bacterial": "Bacterial Spot",
+        "early": "Early Blight",
+        "late": "Late Blight",
+        "symptoms": "Common symptoms",
+        "advice": "General guidance",
+        "tip_title": "How to get a better image",
+        "tip1": "Use good lighting.",
+        "tip2": "Keep the leaf clear and centered.",
+        "tip3": "Avoid blurry photos and busy backgrounds.",
+        "library_title": "Tomato Leaf Disease Library",
+        "library_desc": "These are the four classes recognized by the current model.",
+        "care_title": "Plant Care Guide",
+        "care1": "Watering: Avoid overwatering and consider soil and plant needs.",
+        "care2": "Light: Provide suitable light for the plant species.",
+        "care3": "Inspection: Regularly inspect both sides of leaves.",
+        "care4": "Hygiene: Clean gardening tools and avoid transferring affected material.",
+        "care5": "Expert advice: Consult an agricultural specialist if symptoms spread.",
+        "about_title": "About PhytoScan AI",
+        "about_desc": "A student project exploring deep learning for preliminary tomato leaf disease classification.",
+        "step1": "1. Upload image",
+        "step2": "2. Prepare image",
+        "step3": "3. Run model",
+        "step4": "4. Show prediction",
+        "limitation": "Model limitations",
+        "limitation_text": "The current model recognizes only four tomato-leaf classes. Predictions may be wrong and are not a substitute for expert agricultural diagnosis.",
+        "missing": "Model file not found. Ensure PhytoScan_AI.keras is in the project repository.",
+        "error": "Could not analyze the image. Try another JPG or PNG image.",
+        "wait": "Analyzing image...",
+        "footer": "PhytoScan AI • Educational prototype for preliminary tomato leaf disease classification",
+        "bacterial_sym": "Small dark spots may appear on leaves, sometimes with yellow edges.",
+        "bacterial_advice": "Monitor the spots, avoid wetting leaves during watering, and consult an agricultural specialist if needed.",
+        "early_sym": "Brown spots may show concentric rings with surrounding yellowing.",
+        "early_advice": "Monitor nearby leaves, avoid overhead watering, and seek agricultural advice if symptoms continue.",
+        "late_sym": "Dark spreading lesions may appear and can worsen under favorable disease conditions.",
+        "late_advice": "Inspect the plant promptly and consult an agricultural specialist before selecting a treatment.",
+        "healthy_sym": "The model classified this image as a healthy tomato leaf.",
+        "healthy_advice": "Continue monitoring the plant and maintain suitable growing conditions.",
+        "general": "The model cannot confirm a disease from an image alone."
+    }
+}
+
+t = T[st.session_state.language]
+
+# ---------- Design ----------
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap');
 
 .stApp {
-    background: #F5F4EC;
-    color: #193B2B;
+    background: #F4F3EB;
+    color: #183D2B;
 }
 html, body, [class*="css"] {
     font-family: 'Cairo', sans-serif;
 }
+[data-testid="stSidebar"] {
+    background: #153B2A;
+}
+[data-testid="stSidebar"] * {
+    color: #F5F5EC !important;
+}
 .block-container {
-    max-width: 1120px;
+    max-width: 1180px;
     padding-top: 1.5rem;
     padding-bottom: 3rem;
 }
 .hero {
-    background: linear-gradient(135deg, #153D2B, #286344);
-    color: #FFFFFF;
-    padding: 42px 34px;
+    background: linear-gradient(130deg, #153B2A, #2C6A48);
     border-radius: 26px;
-    margin-bottom: 24px;
+    padding: 42px 34px;
+    color: white;
+    margin: 16px 0 26px 0;
 }
 .hero h1 {
-    color: #FFFFFF;
-    font-size: 2.6rem;
+    color: white !important;
+    font-size: 2.7rem;
     font-weight: 800;
-    margin-bottom: 8px;
 }
 .hero p {
-    color: #E5F0E7;
+    color: #E3EFE5 !important;
     font-size: 1.05rem;
 }
 .panel {
-    background: #FFFFFF;
-    border: 1px solid #E0E8DE;
+    background: white;
+    border: 1px solid #E0E7DC;
     border-radius: 20px;
-    padding: 24px;
+    padding: 22px;
     margin: 12px 0;
 }
-.result {
-    background: #E8F2E8;
-    border-left: 5px solid #397A4D;
+.metric-card {
+    background: white;
+    border: 1px solid #E0E7DC;
+    border-radius: 18px;
     padding: 22px;
-    border-radius: 14px;
-    margin-top: 18px;
+    min-height: 125px;
 }
 .tip {
-    background: #F0EBDD;
+    background: #E7EFE3;
+    border-radius: 16px;
     padding: 18px;
-    border-radius: 14px;
-    margin: 10px 0;
+    margin: 8px 0;
 }
-.small-note {
-    color: #627266;
-    font-size: 0.9rem;
+.result {
+    background: #E5F0E5;
+    border-left: 5px solid #3B8054;
+    padding: 20px;
+    border-radius: 14px;
+    margin-top: 16px;
 }
 div.stButton > button {
+    border-radius: 12px;
+    font-weight: 700;
+    min-height: 44px;
+    border: 1px solid #24583D;
+}
+div.stButton > button[kind="primary"] {
     background: #24583D;
     color: white;
-    border: 0;
-    border-radius: 12px;
-    min-height: 45px;
-    font-weight: 700;
-    width: 100%;
 }
-div.stButton > button:hover {
-    background: #34744F;
-    color: white;
-    border: 0;
+h1, h2, h3 {
+    color: #183D2B;
 }
-h2, h3 {
-    color: #193B2B;
+.small-note {
+    color: #6B7B6E;
+    font-size: .9rem;
 }
-footer {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-# ---------- Translations ----------
-T = {
-    "EN": {
-        "tag": "SMART AGRICULTURE • POWERED BY AI",
-        "title": "PhytoScan AI",
-        "subtitle": "A smarter first look at tomato leaf health.",
-        "intro": "Upload a clear tomato leaf photo to explore the model's prediction and practical care guidance.",
-        "upload": "Upload a tomato leaf image",
-        "analyze": "Analyze Leaf",
-        "another": "Analyze Another Image",
-        "result": "Analysis Result",
-        "prediction": "Predicted class",
-        "confidence": "Model score",
-        "symptoms": "Typical symptoms",
-        "advice": "Suggested next steps",
-        "healthy": "Healthy Tomato Leaf",
-        "bacterial": "Bacterial Spot",
-        "early": "Early Blight",
-        "late": "Late Blight",
-        "guide": "How to get a better result",
-        "tip1": "Use a sharp, well-lit photo.",
-        "tip2": "Keep the leaf centered and visible.",
-        "tip3": "Avoid blurry photos and busy backgrounds.",
-        "disease_guide": "Plant Care Guide",
-        "guide_text": "Check both sides of the leaf, monitor changes, and seek advice from an agricultural specialist if symptoms spread.",
-        "about": "About the project",
-        "about_text": "PhytoScan AI is a student project exploring deep learning for preliminary tomato leaf disease classification.",
-        "warning": "Important limitation",
-        "warning_text": "This model recognizes only four tomato-leaf classes. Its predictions may be wrong. The displayed score is not a guarantee of accuracy or a confirmed diagnosis.",
-        "missing": "Model file not found. Ensure PhytoScan_AI.keras is in the same repository as this app.",
-        "healthy_sym": "The model classified this image as a healthy tomato leaf.",
-        "healthy_advice": "Continue monitoring the plant and maintain good growing conditions.",
-        "bacterial_sym": "Small dark spots may develop on leaves, sometimes with yellow edges.",
-        "bacterial_advice": "Avoid wetting foliage when watering. Remove severely affected material where appropriate and ask an agricultural specialist for guidance.",
-        "early_sym": "Brown spots may develop concentric rings and surrounding yellowing.",
-        "early_advice": "Monitor nearby leaves, avoid overhead watering, and seek agricultural advice if symptoms continue.",
-        "late_sym": "Dark, spreading lesions may occur and can worsen in favorable conditions.",
-        "late_advice": "Inspect the plant promptly and seek professional agricultural guidance before choosing any treatment.",
-        "preview": "Image preview",
-        "working": "Analyzing image...",
-        "error": "The image could not be processed. Try another JPG or PNG image.",
-        "footer": "Built as an educational AI prototype • Tomato leaves only"
-    },
-    "AR": {
-        "tag": "الزراعة الذكية • مدعوم بالذكاء الاصطناعي",
-        "title": "PhytoScan AI",
-        "subtitle": "نظرة أولية أذكى على صحة أوراق الطماطم.",
-        "intro": "ارفعي صورة واضحة لورقة طماطم لاستكشاف توقع النموذج والحصول على إرشادات عامة للعناية بالنبات.",
-        "upload": "ارفعي صورة ورقة طماطم",
-        "analyze": "حلّل الورقة",
-        "another": "حلّل صورة أخرى",
-        "result": "نتيجة التحليل",
-        "prediction": "الفئة المتوقعة",
-        "confidence": "درجة النموذج",
-        "symptoms": "الأعراض المعتادة",
-        "advice": "الخطوات المقترحة",
-        "healthy": "ورقة طماطم سليمة",
-        "bacterial": "التبقع البكتيري",
-        "early": "اللفحة المبكرة",
-        "late": "اللفحة المتأخرة",
-        "guide": "كيف تحصلين على نتيجة أفضل؟",
-        "tip1": "استخدمي صورة واضحة وإضاءة جيدة.",
-        "tip2": "اجعلي الورقة في منتصف الصورة وظاهرة بوضوح.",
-        "tip3": "تجنبي الصور المهزوزة والخلفيات المزدحمة.",
-        "disease_guide": "دليل العناية بالنبات",
-        "guide_text": "افحصي جانبي الورقة وراقبي التغيرات، واستشيري مهندسًا زراعيًا إذا استمرت الأعراض أو انتشرت.",
-        "about": "عن المشروع",
-        "about_text": "PhytoScan AI مشروع طلابي يستكشف استخدام التعلم العميق للتصنيف المبدئي لأمراض أوراق الطماطم.",
-        "warning": "تنبيه مهم",
-        "warning_text": "النموذج يتعرف على أربع فئات فقط من أوراق الطماطم، وقد يخطئ. درجة النموذج ليست ضمانًا لصحة النتيجة ولا تشخيصًا مؤكدًا.",
-        "missing": "ملف النموذج غير موجود. تأكدي من وجود PhytoScan_AI.keras في نفس مستودع التطبيق.",
-        "healthy_sym": "صنّف النموذج الصورة على أنها ورقة طماطم سليمة.",
-        "healthy_advice": "استمري في متابعة النبات والحفاظ على ظروف زراعة مناسبة.",
-        "bacterial_sym": "قد تظهر بقع داكنة صغيرة على الأوراق، وأحيانًا تحيط بها حواف صفراء.",
-        "bacterial_advice": "تجنبي تبليل الأوراق أثناء الري. أزيلي الأجزاء شديدة الإصابة عند ملاءمة ذلك، واستشيري مهندسًا زراعيًا.",
-        "early_sym": "قد تظهر بقع بنية ذات حلقات متداخلة مع اصفرار حولها.",
-        "early_advice": "راقبي الأوراق المجاورة، وتجنبي الري فوق الأوراق، واطلبي المشورة الزراعية إذا استمرت الأعراض.",
-        "late_sym": "قد تظهر بقع داكنة منتشرة وقد تتفاقم في الظروف المناسبة للمرض.",
-        "late_advice": "افحصي النبات سريعًا واستشيري مختصًا زراعيًا قبل اختيار أي علاج.",
-        "preview": "معاينة الصورة",
-        "working": "جارٍ تحليل الصورة...",
-        "error": "تعذرت معالجة الصورة. جرّبي صورة أخرى بصيغة JPG أو PNG.",
-        "footer": "نموذج تعليمي لمشروع ذكاء اصطناعي • أوراق الطماطم فقط"
-    }
-}
-
-t = T[lang]
-
-# ---------- Header ----------
-left, right = st.columns([5, 1])
-with left:
-    st.markdown(
-        f'<div class="small-note">{t["tag"]}</div>',
-        unsafe_allow_html=True
+# ---------- Sidebar navigation ----------
+with st.sidebar:
+    st.markdown("# 🌿 PhytoScan AI")
+    st.caption(t["tag"])
+    page = st.radio(
+        "Navigation" if not ar else "التنقل",
+        [t["home"], t["scanner"], t["library"], t["care"], t["about"]],
+        label_visibility="collapsed"
     )
-with right:
-    if st.button("العربية" if lang == "EN" else "English"):
-        st.session_state.lang = "AR" if lang == "EN" else "EN"
+    st.markdown("---")
+    if st.button(t["language"], use_container_width=True):
+        st.session_state.language = "EN" if ar else "AR"
         st.rerun()
 
-st.markdown(f"""
-<div class="hero" style="text-align:{'right' if ar else 'left'}">
-    <h1>🌿 {t["title"]}</h1>
-    <p><b>{t["subtitle"]}</b></p>
-    <p>{t["intro"]}</p>
-</div>
-""", unsafe_allow_html=True)
+# ---------- Home ----------
+if page == t["home"]:
+    st.markdown(f"""
+    <div class="hero" dir="{'rtl' if ar else 'ltr'}">
+        <p>{t["tag"]}</p>
+        <h1>🌿 {t["welcome"]} PhytoScan AI</h1>
+        <h3 style="color:white">{t["subtitle"]}</h3>
+        <p>{t["description"]}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    c1, c2 = st.columns(2)
+    with c1:
+        st.markdown(f"""
+        <div class="panel">
+            <h3>📷 {t["scanner"]}</h3>
+            <p>{t["scanner_desc"]}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button(t["start"], type="primary", use_container_width=True):
+            st.session_state.selected_page = t["scanner"]
+            st.rerun()
+    with c2:
+        st.markdown(f"""
+        <div class="panel">
+            <h3>📚 {t["library"]}</h3>
+            <p>{t["library_desc"]}</p>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button(t["explore"], use_container_width=True):
+            st.session_state.selected_page = t["library"]
+            st.rerun()
+
+    st.markdown(f"## 🌱 {t['tip_title']}")
+    a, b, c = st.columns(3)
+    with a:
+        st.markdown(f'<div class="tip">☀️<br><b>{t["tip1"]}</b></div>', unsafe_allow_html=True)
+    with b:
+        st.markdown(f'<div class="tip">🍃<br><b>{t["tip2"]}</b></div>', unsafe_allow_html=True)
+    with c:
+        st.markdown(f'<div class="tip">📷<br><b>{t["tip3"]}</b></div>', unsafe_allow_html=True)
 
 # ---------- Model ----------
 MODEL_PATH = "PhytoScan_AI.keras"
-
 CLASS_NAMES = [
     "Tomato___Bacterial_spot",
     "Tomato___Early_blight",
@@ -215,112 +295,129 @@ CLASS_NAMES = [
     "Tomato___healthy"
 ]
 
-DISPLAY_NAMES = {
-    "Tomato___Bacterial_spot": t["bacterial"],
-    "Tomato___Early_blight": t["early"],
-    "Tomato___Late_blight": t["late"],
-    "Tomato___healthy": t["healthy"]
-}
+if page == t["scanner"]:
+    st.title(f"📷 {t['scanner_title']}")
+    st.write(t["scanner_desc"])
 
-DETAILS = {
-    "Tomato___Bacterial_spot": (t["bacterial_sym"], t["bacterial_advice"]),
-    "Tomato___Early_blight": (t["early_sym"], t["early_advice"]),
-    "Tomato___Late_blight": (t["late_sym"], t["late_advice"]),
-    "Tomato___healthy": (t["healthy_sym"], t["healthy_advice"])
-}
+    if not os.path.exists(MODEL_PATH):
+        st.error(t["missing"])
+    else:
+        uploaded = st.file_uploader(
+            t["upload"],
+            type=["jpg", "jpeg", "png"],
+            key="plant_image"
+        )
 
-@st.cache_resource
-def get_model():
-    return load_model(MODEL_PATH)
+        if uploaded is not None:
+            try:
+                image = Image.open(uploaded).convert("RGB")
+                st.image(image, caption=t["upload"], use_container_width=True)
 
-if not os.path.exists(MODEL_PATH):
-    st.error(t["missing"])
-    st.stop()
+                if st.button(t["analyze"], type="primary"):
+                    with st.spinner(t["wait"]):
+                        resized = image.resize((128, 128))
+                        array = np.asarray(resized, dtype=np.float32) / 255.0
+                        array = np.expand_dims(array, axis=0)
 
-# ---------- Upload and prediction ----------
-st.markdown(f"### 📷 {t['upload']}")
+                        @st.cache_resource
+                        def get_model():
+                            return load_model(MODEL_PATH)
 
-uploaded_file = st.file_uploader(
-    t["upload"],
-    type=["jpg", "jpeg", "png"],
-    key="leaf_upload"
-)
+                        predictions = np.asarray(
+                            get_model().predict(array, verbose=0)
+                        )[0]
+                        idx = int(np.argmax(predictions))
+                        cls = CLASS_NAMES[idx]
+                        score = float(predictions[idx]) * 100
 
-if uploaded_file is not None:
-    try:
-        image = Image.open(uploaded_file).convert("RGB")
-        st.markdown(f"#### {t['preview']}")
-        st.image(image, use_container_width=True)
+                        name_key = {
+                            CLASS_NAMES[0]: "bacterial",
+                            CLASS_NAMES[1]: "early",
+                            CLASS_NAMES[2]: "late",
+                            CLASS_NAMES[3]: "healthy"
+                        }
+                        key = name_key[cls]
+                        symptom_key = {
+                            CLASS_NAMES[0]: "bacterial_sym",
+                            CLASS_NAMES[1]: "early_sym",
+                            CLASS_NAMES[2]: "late_sym",
+                            CLASS_NAMES[3]: "healthy_sym"
+                        }
+                        advice_key = {
+                            CLASS_NAMES[0]: "bacterial_advice",
+                            CLASS_NAMES[1]: "early_advice",
+                            CLASS_NAMES[2]: "late_advice",
+                            CLASS_NAMES[3]: "healthy_advice"
+                        }
 
-        if st.button(t["analyze"], key="analyze_leaf"):
-            with st.spinner(t["working"]):
-                resized = image.resize((128, 128))
-                array = np.array(resized, dtype=np.float32) / 255.0
-                array = np.expand_dims(array, axis=0)
+                    st.markdown(f"## 🌱 {t['result']}")
+                    st.markdown(f"""
+                    <div class="result">
+                        <h3>{t[key]}</h3>
+                        <p><b>{t["score"]}:</b> {score:.1f}%</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    st.progress(min(max(score / 100, 0.0), 1.0))
 
-                model = get_model()
-                predictions = np.asarray(model.predict(array, verbose=0))[0]
-                index = int(np.argmax(predictions))
-                class_name = CLASS_NAMES[index]
-                score = float(predictions[index]) * 100
-                symptoms, advice = DETAILS[class_name]
+                    x, y = st.columns(2)
+                    with x:
+                        st.markdown(f"""
+                        <div class="panel">
+                            <h3>🔎 {t["symptoms"]}</h3>
+                            <p>{t[symptom_key[cls]]}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+                    with y:
+                        st.markdown(f"""
+                        <div class="panel">
+                            <h3>🌿 {t["advice"]}</h3>
+                            <p>{t[advice_key[cls]]}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
 
-            st.markdown(f"## 🌱 {t['result']}")
-            st.markdown(f"""
-            <div class="result">
-                <h3>{DISPLAY_NAMES[class_name]}</h3>
-                <p><b>{t["confidence"]}:</b> {score:.1f}%</p>
-            </div>
-            """, unsafe_allow_html=True)
+                    st.warning(t["limitation_text"])
+                    if st.button(t["again"]):
+                        st.rerun()
 
-            st.progress(min(max(score / 100, 0.0), 1.0))
+            except Exception:
+                st.error(t["error"])
 
-            st.markdown(f"""
-            <div class="panel">
-                <h3>🔎 {t["symptoms"]}</h3>
-                <p>{symptoms}</p>
-                <hr>
-                <h3>🌿 {t["advice"]}</h3>
-                <p>{advice}</p>
-            </div>
-            """, unsafe_allow_html=True)
+# ---------- Disease library ----------
+if page == t["library"]:
+    st.title(f"📚 {t['library_title']}")
+    st.write(t["library_desc"])
 
-            st.info(t["warning_text"])
+    diseases = [
+        ("bacterial", "bacterial_sym", "bacterial_advice", "🟤"),
+        ("early", "early_sym", "early_advice", "🍂"),
+        ("late", "late_sym", "late_advice", "🌑"),
+        ("healthy", "healthy_sym", "healthy_advice", "🌿")
+    ]
+    for name, symptom, advice, emoji in diseases:
+        with st.expander(f"{emoji} {t[name]}"):
+            st.write(f"**{t['symptoms']}:** {t[symptom]}")
+            st.write(f"**{t['advice']}:** {t[advice]}")
 
-            st.session_state["has_result"] = True
+# ---------- Plant care ----------
+if page == t["care"]:
+    st.title(f"🌱 {t['care_title']}")
+    for key in ["care1", "care2", "care3", "care4", "care5"]:
+        st.markdown(f'<div class="panel">{t[key]}</div>', unsafe_allow_html=True)
+    st.info(t["general"])
 
-    except Exception:
-        st.error(t["error"])
-
-if st.session_state.get("has_result", False):
-    if st.button(t["another"], key="another_image"):
-        st.session_state.pop("has_result", None)
-        st.rerun()
-
-# ---------- Guidance ----------
-st.markdown("---")
-st.markdown(f"## 📸 {t['guide']}")
-
-c1, c2, c3 = st.columns(3)
-with c1:
-    st.markdown(f'<div class="tip">☀️<br><b>{t["tip1"]}</b></div>', unsafe_allow_html=True)
-with c2:
-    st.markdown(f'<div class="tip">🍃<br><b>{t["tip2"]}</b></div>', unsafe_allow_html=True)
-with c3:
-    st.markdown(f'<div class="tip">📷<br><b>{t["tip3"]}</b></div>', unsafe_allow_html=True)
-
-st.markdown(f"""
-<div class="panel">
-    <h3>🌱 {t["disease_guide"]}</h3>
-    <p>{t["guide_text"]}</p>
-</div>
-<div class="panel">
-    <h3>💡 {t["about"]}</h3>
-    <p>{t["about_text"]}</p>
-</div>
-""", unsafe_allow_html=True)
-
-st.warning(t["warning_text"])
+# ---------- About ----------
+if page == t["about"]:
+    st.title(f"🌿 {t['about_title']}")
+    st.markdown(f'<div class="panel"><p>{t["about_desc"]}</p></div>', unsafe_allow_html=True)
+    st.subheader(t["about"])
+    cols = st.columns(4)
+    steps = ["step1", "step2", "step3", "step4"]
+    for col, key in zip(cols, steps):
+        with col:
+            st.markdown(f'<div class="metric-card">{t[key]}</div>', unsafe_allow_html=True)
+    st.markdown("---")
+    st.subheader(t["limitation"])
+    st.warning(t["limitation_text"])
 
 st.markdown("---")
 st.markdown(
